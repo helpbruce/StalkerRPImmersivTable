@@ -1,0 +1,726 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  background-image: url('icons/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+/* Обёртка экрана */
+#screenWrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.8s ease;
+}
+
+/* Кнопка "Добавить файл" */
+#addBtnFolder {
+  position: fixed;
+  bottom: 3vh;
+  left: 3vw;
+  padding: clamp(8px, 1vw, 16px) clamp(12px, 1.4vw, 24px);
+  font-size: clamp(14px, 1.2vw, 20px);
+  border: none;
+  border-radius: 8px;
+  background: #ffcc66;
+  color: #3a250f;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  z-index: 100;
+}
+
+/* Контейнер */
+.container {
+  position: fixed;
+  width: 440px;
+  height: 560px;
+  left: 20vw;
+  perspective: 2600px;
+  transform-style: preserve-3d;
+  transform: scale(1.26);
+  transform: 1.5s easy;
+  transition: transform 3s cubic-bezier(.25,.8,.25,1);
+}
+
+.container:hover { transform: scale(1.28) }
+
+/* Крышка */
+.cover {
+  position: fixed;
+  top: 0;
+  background-size: 100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1100;
+  scale: 1;
+  transform-origin: left;
+  transition: transform 1.6s ease-in-out;
+  transform-style: preserve-3d;
+}
+
+.cover:hover { 
+  transform: rotateY(-32deg); 
+}
+
+/* Передняя сторона */
+.cover-front {
+  position: fixed;
+  inset: 0;
+  transform: rotateY(0deg);
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  filter: drop-shadow(0px 15px 30px rgba(0,0,0,0.2));
+}
+
+/* Толщина */
+.cover-front::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: #c8b090;
+  border-radius: 0 6px 6px 0;
+  box-shadow: inset -2px 0 4px rgba(0,0,0,0.4);
+}
+
+/* Задняя сторона */
+.cover-back {
+  position: fixed;
+  inset: 0;
+  scale: 1;
+  background-size: 100%;
+  background-image: url('icons/folder_open.png');
+  transform: rotateY(180deg);
+  background-position: center;
+  filter: drop-shadow(0px 15px 30px rgba(0,0,0,0.2));
+}
+
+/* Анимация */
+.folder.open .cover {
+  transform: rotateY(-180deg);
+}
+
+.pages-container {
+  position: fixed;     
+  top: 0;
+  left: 6.5px;
+  width: 100%;
+  height: 100%;
+  scale: 1.03;
+  background-image: url('icons/folder_back.png'); 
+  background-size: 100%;
+  background-position: center;
+  z-index: 1;
+  pointer-events: none;
+  background-repeat: no-repeat;
+}
+
+.folder.open .pages-container {
+  pointer-events: auto;
+}
+
+.page-stack {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  scale: 0.7;
+  left: -15px;
+  top: -5px;
+  transform-style: preserve-3d;
+}
+
+.page {
+  position: fixed;
+  width: 82%;
+  height: 86%;
+  background: rgb(173, 157, 157);
+  border-radius: 4px;
+  overflow: hidden;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: 
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    clip-path 0.25s ease;
+
+
+  clip-path: polygon(
+    0% 1%,
+    100% 0%,
+    99% 50%,
+    100% 100%,
+    0% 99%,
+    1% 50%
+
+
+
+  );
+}
+
+
+
+.page {
+  box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+  transition: box-shadow 0.3s ease;
+}
+
+
+.page.flip {
+  animation: flipPage 0.45s ease forwards;
+}
+
+@keyframes flipPage {
+  0% {
+    transform: translate(-50%, -50%) rotateY(0deg) scale(1);
+  }
+  40% {
+    transform: translate(-50%, -50%) rotateY(-60deg) scale(1.03);
+  }
+  100% {
+    transform: translate(-150%, -50%) rotateY(-90deg) scale(0.9);
+    opacity: 0;
+  }
+}
+
+
+
+
+
+
+
+.page img,
+.page iframe {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* USB иконка */
+#usbIcon {
+  width: min(22vw, 360px);
+  height: min(22vw, 360px);
+  filter: drop-shadow(30px 30px 30px rgba(0,0,0,1));
+  transition: transform 1s ease-out, filter 0.3s ease;
+  background-image: url('icons/flash.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  position: fixed;
+  right: -50px;
+  top: 85%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+#usbIcon:hover {
+  transform: translateY(-50%) scale(1.3) rotate(-8deg);
+  filter: drop-shadow(50px 50px 50px rgba(0,0,0,1));
+}
+
+/* USB окно */
+.usb-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.usb-modal.open {
+  display: flex;
+}
+
+.usb-window {
+  background: #ece9d8;
+  width: min(80vw, 960px);
+  height: min(70vh, 540px);
+  border: 2px solid #3a6ea5;
+  border-radius: 6px;
+  box-shadow: 0 0 35px rgba(0,0,0,0.7);
+  font-family: Tahoma, sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Верхняя панель XP */
+.usb-title {
+  background: linear-gradient(to bottom, #3a6ea5, #2b579a);
+  height: 28px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  border-bottom: 1px solid #1f3f6b;
+}
+
+/* Кнопка закрытия XP */
+.usb-close {
+  width: 20px;
+  height: 20px;
+  background: #c33;
+  border: 1px solid #600;
+  border-radius: 3px;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  line-height: 18px;
+  cursor: pointer;
+  font-family: Tahoma;
+  font-size: 14px;
+}
+
+.usb-close:hover {
+  background: #e55;
+}
+
+/* Секции USB */
+.usb-section {
+  margin-bottom: 20px;
+}
+
+.usb-section h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #2b579a;
+  font-family: Tahoma;
+}
+
+.usb-section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+}
+
+/* Элемент USB */
+.usb-item {
+  width: 100%;
+  padding: 12px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.usb-item img,
+.usb-item iframe,
+.usb-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Кнопка добавления USB */
+.usb-add {
+  margin: 10px;
+  padding: clamp(6px, 1vw, 12px) clamp(12px, 1.4vw, 20px);
+  background: #ece9d8;
+  border: 1px solid #7f9db9;
+  border-radius: 3px;
+  font-family: Tahoma;
+  cursor: pointer;
+  font-size: clamp(12px, 1vw, 16px);
+}
+
+.usb-add:hover {
+  background: #fff;
+}
+
+/* Модалка добавления */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2500;
+}
+
+.modal.open {
+  display: flex;
+}
+
+.add-modal-inner {
+  background: #fff;
+  padding: clamp(20px, 3vw, 40px);
+  border-radius: 12px;
+  width: min(90vw, 360px);
+  text-align: center;
+}
+
+.add-modal-inner input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.add-modal-inner button {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+/* Полноэкранный просмотр */
+#viewerModal {
+  z-index: 3000;
+}
+
+.viewer-content {
+  max-width: 96vw;
+  max-height: 96vh;
+}
+
+.viewer-content img,
+.viewer-content iframe,
+.viewer-content video {
+  max-width: 96vw;
+  max-height: 96vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Кнопка закрытия */
+.viewer-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 60px;
+  color: white;
+  cursor: pointer;
+}
+
+/* Стрелки */
+.viewer-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 80px;
+  color: white;
+  opacity: 0.35;
+  cursor: pointer;
+  z-index: 3100;
+  user-select: none;
+}
+
+.viewer-arrow-left { left: 20px; }
+.viewer-arrow-right { right: 20px; }
+
+/* Кликабельные зоны */
+.viewer-zone {
+  position: absolute;
+  top: 80px;
+  height: calc(100% - 80px);
+  width: 50%;
+}
+
+.viewer-zone-left { left: 0; }
+.viewer-zone-right { right: 0; }
+
+/* Кнопка удаления */
+#deleteBtn {
+  position: fixed;
+  bottom: 4vh;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: clamp(10px, 1vw, 16px) clamp(18px, 1.4vw, 26px);
+  font-size: clamp(14px, 1.2vw, 20px);
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: none;
+  z-index: 3200;
+  transition: opacity 0.2s;
+}
+
+/* PDA иконка */
+#pdaIcon {
+  width: min(48vw, 600px);
+  height: min(48vw, 600px);
+  pointer-events: none;
+  background-image: url('icons/pda.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  position: fixed;
+  right: -10vw;
+  bottom: 65vh;
+
+  transform: rotate(19deg);
+  transition: transform 0.9s ease, top 0.9s ease, left 0.9s ease, right 0.9s ease;
+  cursor: pointer;
+}
+
+/* PDA окно */
+.pda-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2600;
+}
+
+.pda-modal.open {
+  display: flex;
+}
+
+.pda-window {
+  background: #ece9d8;
+  width: min(70vw, 720px);
+  height: min(70vh, 520px);
+  border: 2px solid #3a6ea5;
+  border-radius: 6px;
+  box-shadow: 0 0 35px rgba(0,0,0,0.7);
+  overflow: hidden;
+  font-family: Tahoma;
+  position: relative;
+}
+
+/* Верхняя панель */
+.pda-title {
+  background: linear-gradient(to bottom, #3a6ea5, #2b579a);
+  height: 28px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  border-bottom: 1px solid #1f3f6b;
+}
+
+/* Закрытие */
+.pda-close {
+  width: 20px;
+  height: 20px;
+  background: #c33;
+  border: 1px solid #600;
+  border-radius: 3px;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  line-height: 18px;
+  cursor: pointer;
+}
+
+/* Контент */
+.pda-content {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  height: calc(100% - 28px);
+}
+
+#pdaPhoto {
+  width: 40%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
+
+#pdaText {
+  width: 60%;
+  font-size: 16px;
+  overflow-y: auto;
+}
+
+/* Marlboro / Zippo */
+.decor {
+  width: 341px;
+  height: 512px;
+
+  position: fixed;
+  left: 420px;
+  bottom: -300px;
+
+  filter: drop-shadow(45px 45px 45px rgba(0,0,0,1));
+  pointer-events: auto;
+  rotate: -2deg;
+  transition: 
+    transform 3s cubic-bezier(.25,.8,.25,1),
+    filter 0.6s ease;
+
+  z-index: 999;
+}
+
+.decor:hover {
+  transform: translateY(-60px) scale(1.15);
+  filter: drop-shadow(60px 60px 60px rgba(0,0,0,1));
+}
+
+.decor2 {
+  width: 247px;
+  height: 361px;
+
+  position: fixed;
+  left: 768px;
+  bottom: -170px;
+
+  rotate: -6deg;
+  filter: drop-shadow(15px 15px 15px rgba(0,0,0,1));
+  pointer-events: auto;
+  transition: transform 1.4s cubic-bezier(.25,.8,.25,1);
+  z-index: 999;
+}
+
+.decor2:hover {
+  transform: translateY(-50px) scale(1.15);
+  filter: drop-shadow(30px 30px 30px rgba(0,0,0,1));
+}
+
+.decor, .decor2 { 
+  transition: transform 0.5s ease, filter 0.3s ease, opacity 0.4s ease; 
+}
+
+#smoke {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 400px;
+  height: 400px;
+  opacity: 0;
+  pointer-events: none;
+  background: url('icons/smoke.gif') center/contain no-repeat;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.6s ease;
+}
+
+#smokeVideo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2500px;
+  height: auto;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+
+  mix-blend-mode: screen;
+  transition: opacity 2s ease;
+  z-index: 9999;
+}
+
+/* Красная кнопка загрузки */
+.upload-wrapper {
+  position: fixed;
+  bottom: 32px;
+  left: 32px;
+  z-index: 50;
+}
+
+.upload-btn {
+  width: 56px;
+  height: 56px;
+  background: #694e14;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+  transition: transform 0.15s ease;
+  opacity: 0.7;
+}
+
+.upload-btn:hover {
+  transform: scale(1.1);
+}
+
+.upload-btn:active {
+  transform: scale(0.9);
+}
+
+/* Glow */
+.glow {
+  position: absolute;
+  inset: 0;
+  background: #694e14;
+  border-radius: 50%;
+  filter: blur(12px);
+  opacity: 0.3;
+  animation: none;
+}
+
+.upload-btn:hover .glow {
+  animation: glowPulse 2s infinite ease-in-out;
+}
+
+@keyframes glowPulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.3); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 0.5; }
+}
+
+/* Icon */
+.icon {
+  position: relative;
+  z-index: 10;
+  color: rgb(0, 0, 0);
+  font-size: 28px;
+  font-weight: bold;
+  animation: none;
+}
+
+/* Ripple */
+.ripple {
+  position: absolute;
+  inset: 0;
+  border: 2px solid #000000;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(1);
+  animation: none;
+}
+
+.upload-btn:hover .ripple {
+  animation: ripple 1.5s infinite ease-out;
+}
