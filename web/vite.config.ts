@@ -1,8 +1,13 @@
 import { defineConfig } from 'vite'
 import path from 'path'
-import tailwindcss from '@tailwindcss/vite'
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+export default defineConfig({
+  base: '/StalkerRPImmersivTable/',   
+  plugins: [react()],
+})
+           
 export default defineConfig({
   plugins: [
     // The React and Tailwind plugins are both required for Make, even if
