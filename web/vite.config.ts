@@ -16,3 +16,4 @@ export default defineConfig({
   },
   assetsInclude: ['**/*.svg', '**/*.csv'],
 })
+
